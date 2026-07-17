@@ -1,0 +1,13 @@
+{
+  "name": "PiggyBank — weight & pig-out tracker",
+  "short_name": "PiggyBank",
+  "description": "A friendly calendar for logging your weight and stamping the days you pigged out.",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFDF7",
+  "theme_color": "#EDDCC6",
+  "icons": [
+    { "src": "assets/big-pig.png", "sizes": "247x247", "type": "image/png", "purpose": "any" }
+  ]
+}
