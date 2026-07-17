@@ -1,12 +1,22 @@
 /* PiggyBank — weight & pig-out tracker.
    Data lives in localStorage under STORE_KEY:
-   { "YYYY-MM-DD": { weight: number|null, stamp: "big"|"small"|null, rot: number } } */
+   { "YYYY-MM-DD": {
+       weight: number|null,
+       stamp:  "big"|"small"|null,   // the pig, if any
+       rot:    number,               // its tilt
+       gym:    boolean,              // the dumbbell, independent of the pig
+       gymRot: number
+   } }
+   A day can carry a pig and a dumbbell at once; entries written before the
+   dumbbell existed simply have no `gym` key, which reads as false. */
 
 (function () {
   'use strict';
 
   var STORE_KEY = 'pigTracker.v1';
+  var SVG_NS = 'http://www.w3.org/2000/svg';
   var PIG_SRC = { big: 'assets/big-pig.png', small: 'assets/small-pig.png' };
+  var LABEL = { big: 'Big pig', small: 'Small pig', gym: 'Workout' };
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
                 'July', 'August', 'September', 'October', 'November', 'December'];
   var WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -52,10 +62,40 @@
   }
 
   function entry(key) {
-    return state.data[key] || { weight: null, stamp: null, rot: 0 };
+    return state.data[key] || { weight: null, stamp: null, rot: 0, gym: false, gymRot: 0 };
+  }
+
+  /* Build one stamp: pigs are the colored sketch PNGs, the dumbbell is an
+     <svg><use> pointing at the sprite symbol. */
+  function makeStamp(kind, rot, extraClass) {
+    var el;
+    if (kind === 'gym') {
+      el = document.createElementNS(SVG_NS, 'svg');
+      el.setAttribute('class', 'stamp stamp--gym' + (extraClass ? ' ' + extraClass : ''));
+      el.setAttribute('role', 'img');
+      el.setAttribute('aria-label', LABEL[kind]);
+      var use = document.createElementNS(SVG_NS, 'use');
+      use.setAttribute('href', '#dumbbell');
+      el.appendChild(use);
+    } else {
+      el = document.createElement('img');
+      el.className = 'stamp' + (extraClass ? ' ' + extraClass : '');
+      el.src = PIG_SRC[kind];
+      el.alt = LABEL[kind];
+    }
+    el.style.setProperty('--r', 'rotate(' + rot + 'deg)');
+    el.style.transform = 'rotate(' + rot + 'deg)';
+    return el;
   }
 
   function randRot() { return Math.round(Math.random() * 20 - 10); }
+
+  /* Pigs get a signed tilt so the two are easy to tell apart at a glance:
+     the small pig always leans right, the big pig always leans left. */
+  function pigRot(kind) {
+    var tilt = Math.round(6 + Math.random() * 8);
+    return kind === 'small' ? tilt : -tilt;
+  }
 
   function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
 
@@ -74,17 +114,27 @@
 
   function applyStamp(key) {
     var e = Object.assign({}, entry(key));
-    if (e.stamp === state.armed) {
+    var added;
+
+    if (state.armed === 'gym') {
+      // the dumbbell toggles on its own, leaving any pig on the day alone
+      e.gym = !e.gym;
+      e.gymRot = e.gym ? randRot() : 0;
+      added = e.gym;
+    } else if (e.stamp === state.armed) {
       e.stamp = null;
       e.rot = 0;
+      added = false;
     } else {
       e.stamp = state.armed;
-      e.rot = randRot();
+      e.rot = pigRot(state.armed);
+      added = true;
     }
+
     state.data[key] = e;
     persist();
 
-    state.justStamped = e.stamp ? key : null;
+    state.justStamped = added ? key : null;
     renderCalendar();
 
     clearTimeout(stampTimer);
@@ -159,10 +209,11 @@
   function renderPicker() {
     $('pick-big').setAttribute('aria-pressed', String(state.armed === 'big'));
     $('pick-small').setAttribute('aria-pressed', String(state.armed === 'small'));
+    $('pick-gym').setAttribute('aria-pressed', String(state.armed === 'gym'));
     var hint = $('hint');
     hint.textContent = state.armed
       ? 'tap a day to stamp it'
-      : 'tap a day to log weight · tap a pig to stamp';
+      : 'tap a day to log weight · pick a stamp below';
     hint.classList.toggle('hint--armed', !!state.armed);
   }
 
@@ -182,9 +233,14 @@
       var key = fmt(dt.getFullYear(), dt.getMonth(), dt.getDate());
       var e = entry(key);
 
+      var hasPig = inMonth && !!e.stamp;
+      var hasGym = inMonth && !!e.gym;
+
       var cell = document.createElement('button');
       cell.type = 'button';
-      cell.className = 'day' + (inMonth ? '' : ' day--out') + (inMonth && key === tk ? ' day--today' : '');
+      cell.className = 'day' + (inMonth ? '' : ' day--out') +
+        (inMonth && key === tk ? ' day--today' : '') +
+        (hasPig && hasGym ? ' day--paired' : '');
       if (!inMonth) cell.disabled = true;
 
       var num = document.createElement('span');
@@ -192,15 +248,15 @@
       num.textContent = dt.getDate();
       cell.appendChild(num);
 
-      if (inMonth && e.stamp) {
-        var img = document.createElement('img');
-        img.className = 'day__pig day__pig--' + e.stamp +
-          (state.justStamped === key ? ' day__pig--stamping' : '');
-        img.src = PIG_SRC[e.stamp];
-        img.alt = e.stamp === 'big' ? 'Big pig' : 'Small pig';
-        img.style.setProperty('--r', 'rotate(' + (e.rot || 0) + 'deg)');
-        img.style.transform = 'rotate(' + (e.rot || 0) + 'deg)';
-        cell.appendChild(img);
+      var fresh = state.justStamped === key ? ' day__stamp--stamping' : '';
+
+      if (hasPig) {
+        cell.appendChild(makeStamp(e.stamp, e.rot || 0,
+          'day__stamp day__stamp--' + e.stamp + fresh));
+      }
+      if (hasGym) {
+        cell.appendChild(makeStamp('gym', e.gymRot || 0,
+          'day__stamp day__stamp--gym' + fresh));
       }
 
       if (inMonth && e.weight != null) {
@@ -232,13 +288,14 @@
     $('trends-month').textContent = MONTHS[state.month] + ' ' + state.year;
 
     var n = daysInMonth(state.year, state.month);
-    var weights = [], bigCount = 0, smallCount = 0;
+    var weights = [], bigCount = 0, smallCount = 0, gymCount = 0;
 
     for (var d = 1; d <= n; d++) {
       var e = entry(fmt(state.year, state.month, d));
       weights.push(e.weight != null ? e.weight : null);
       if (e.stamp === 'big') bigCount++;
       if (e.stamp === 'small') smallCount++;
+      if (e.gym) gymCount++;
     }
 
     var known = [];
@@ -257,8 +314,19 @@
 
     $('stat-big').textContent = bigCount;
     $('stat-small').textContent = smallCount;
+    $('stat-gym').textContent = gymCount;
 
     renderChart(weights, known, n);
+  }
+
+  /* Centre a stamp in a chart column, optionally nudged so a pig and a
+     dumbbell on the same day sit side by side instead of on top of each other. */
+  function placeChartStamp(cell, svg, size, dx, dy) {
+    svg.style.width = size + 'px';
+    svg.style.height = size + 'px';
+    svg.style.marginLeft = (-size / 2 + dx) + 'px';
+    svg.style.marginTop = (-size / 2 + dy) + 'px';
+    cell.appendChild(svg);
   }
 
   function renderChart(weights, known, n) {
@@ -370,15 +438,15 @@
       var cell = document.createElement('div');
       cell.className = 'chart__cell';
       cell.style.width = COL_W + 'px';
+
+      var both = !!e.stamp && !!e.gym;
       if (e.stamp) {
-        var img = document.createElement('img');
-        img.src = PIG_SRC[e.stamp];
-        img.alt = e.stamp === 'big' ? 'Big pig' : 'Small pig';
-        var size = e.stamp === 'small' ? 18 : 26;
-        img.width = size;
-        img.height = size;
-        img.style.transform = 'rotate(' + (e.rot || 0) + 'deg)';
-        cell.appendChild(img);
+        var sz = e.stamp === 'small' ? (both ? 15 : 18) : (both ? 21 : 26);
+        placeChartStamp(cell, makeStamp(e.stamp, e.rot || 0), sz, both ? -4 : 0, both ? -2 : 0);
+      }
+      if (e.gym) {
+        placeChartStamp(cell, makeStamp('gym', e.gymRot || 0), both ? 13 : 17,
+          both ? 6 : 0, both ? 4 : 0);
       }
       pigRow.appendChild(cell);
 
@@ -408,15 +476,13 @@
       wd.appendChild(d);
     });
 
-    $('img-big').src = $('img-big-2').src = PIG_SRC.big;
-    $('img-small').src = $('img-small-2').src = PIG_SRC.small;
-
     $('btn-prev').addEventListener('click', function () { shiftMonth(-1); });
     $('btn-next').addEventListener('click', function () { shiftMonth(1); });
     $('btn-trends').addEventListener('click', function () { setView('analytics'); });
     $('btn-back').addEventListener('click', function () { setView('cal'); });
     $('pick-big').addEventListener('click', function () { setArmed('big'); });
     $('pick-small').addEventListener('click', function () { setArmed('small'); });
+    $('pick-gym').addEventListener('click', function () { setArmed('gym'); });
 
     $('btn-save').addEventListener('click', saveWeight);
     $('btn-clear').addEventListener('click', clearWeight);

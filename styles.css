@@ -4,6 +4,7 @@
   --ink-soft: #FCE7EE;
   --ink-soft-shadow: #EFCBD8;
   --line: #12938F;
+  --gym: #4A3A34;
   --paper: #FFFDF7;
   --text: #4A3A34;
   --muted: #A8968D;
@@ -258,15 +259,41 @@ input[type=number] { -moz-appearance: textfield; }
 }
 .day--out .day__num { color: var(--outmonth); font-weight: 700; }
 
-.day__pig {
+/* Pig stamps are colored sketch PNGs; the dumbbell is an SVG symbol that
+   takes its color from `color`. */
+.sprite { display: none; }
+
+.stamp {
+  display: block;
+  object-fit: contain;
+}
+.stamp--gym { color: var(--gym); }
+
+.day__stamp {
   position: absolute;
   left: 50%; top: 53%;
   z-index: 2;
-  object-fit: contain;
 }
-.day__pig--big   { width: 38px; height: 38px; margin: -19px 0 0 -19px; }
-.day__pig--small { width: 27px; height: 27px; margin: -13.5px 0 0 -13.5px; }
-.day__pig--stamping { animation: stampIn .6s cubic-bezier(.2, 1.3, .35, 1); }
+.day__stamp--big   { width: 38px; height: 38px; margin: -19px 0 0 -19px; }
+.day__stamp--small { width: 27px; height: 27px; margin: -13.5px 0 0 -13.5px; }
+.day__stamp--gym   { width: 26px; height: 26px; margin: -13px 0 0 -13px; z-index: 3; }
+
+/* When a day carries both a pig and a dumbbell, shrink the pig and shift it
+   left, and park the dumbbell in the free top-right corner — the day number
+   owns the top-left and the weight chip owns the bottom, so anything placed
+   low gets hidden behind it. */
+.day--paired .day__stamp--big   { width: 31px; height: 31px; margin: -14.5px 0 0 -20.5px; }
+.day--paired .day__stamp--small { width: 24px; height: 24px; margin: -11px 0 0 -17px; }
+.day--paired .day__stamp--gym {
+  left: auto;
+  right: 1px;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
+.day__stamp--stamping { animation: stampIn .6s cubic-bezier(.2, 1.3, .35, 1); }
 
 .day__weight {
   position: absolute;
@@ -302,7 +329,7 @@ input[type=number] { -moz-appearance: textfield; }
   gap: 12px;
   padding-bottom: 26px;
 }
-.pig-btn {
+.pick {
   flex: 1;
   border: none;
   cursor: pointer;
@@ -312,7 +339,7 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: center;
   justify-content: center;
 }
-.pig-slot {
+.slot {
   position: relative;
   border-radius: 50%;
   background: #FCF4EC;
@@ -320,13 +347,15 @@ input[type=number] { -moz-appearance: textfield; }
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
-.pig-slot img { width: 84%; height: 84%; object-fit: contain; }
-.pig-slot--big   { width: 74px; height: 74px; }
-.pig-slot--small { width: 52px; height: 52px; }
-.pig-btn[aria-pressed="true"] .pig-slot { border-color: var(--ink); border-width: 4px; }
-.pig-btn:active .pig-slot { transform: scale(.94); }
+.slot--big   { width: 74px; height: 74px; }
+.slot--small { width: 52px; height: 52px; }
+.slot--gym   { width: 60px; height: 60px; }
+/* mirror the stamps' fixed lean: big left, small right */
+.slot--big .stamp   { transform: rotate(-9deg); }
+.slot--small .stamp { transform: rotate(10deg); }
+.pick[aria-pressed="true"] .slot { border-color: var(--ink); border-width: 4px; }
+.pick:active .slot { transform: scale(.94); }
 
 /* ---------- Trends ---------- */
 
@@ -361,8 +390,9 @@ input[type=number] { -moz-appearance: textfield; }
 .stat__value--up small,
 .stat__value--down small { color: inherit; }
 .stat__value--down { color: var(--down); }
-.stat__pig { width: 34px; height: 34px; object-fit: contain; flex: none; }
-.stat__pig--sm { width: 24px; height: 24px; }
+.stat--wide { grid-column: span 2; }
+.stat__icon { width: 34px; height: 34px; flex: none; }
+.stat__icon--sm { width: 26px; height: 26px; }
 .stat__count {
   font-family: 'Baloo 2', sans-serif;
   font-weight: 800;
@@ -397,12 +427,10 @@ input[type=number] { -moz-appearance: textfield; }
 .chart__row--pigs { margin-top: 2px; }
 .chart__cell {
   flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   height: 32px;
 }
-.chart__cell img { object-fit: contain; }
+.chart__cell .stamp { position: absolute; left: 50%; top: 50%; }
 .chart__label {
   flex: none;
   text-align: center;

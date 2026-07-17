@@ -18,6 +18,16 @@
 </head>
 <body>
 
+<svg class="sprite" aria-hidden="true">
+  <symbol id="dumbbell" viewBox="0 0 64 64">
+    <rect x="4"  y="24" width="7"  height="16" rx="2.5" fill="currentColor"/>
+    <rect x="13" y="18" width="9"  height="28" rx="3.5" fill="currentColor"/>
+    <rect x="22" y="28" width="20" height="8"  rx="3"   fill="currentColor"/>
+    <rect x="42" y="18" width="9"  height="28" rx="3.5" fill="currentColor"/>
+    <rect x="53" y="24" width="7"  height="16" rx="2.5" fill="currentColor"/>
+  </symbol>
+</svg>
+
 <div class="stage">
   <div class="phone">
 
@@ -55,11 +65,20 @@
 
       <p class="hint" id="hint"></p>
       <div class="picker">
-        <button class="pig-btn" id="pick-big" aria-label="Big pig stamp">
-          <span class="pig-slot pig-slot--big"><img id="img-big" alt=""></span>
+        <button class="pick" id="pick-big" aria-label="Big pig stamp">
+          <span class="slot slot--big">
+            <img class="stamp" src="assets/big-pig.png" width="62" height="62" alt="Big pig">
+          </span>
         </button>
-        <button class="pig-btn" id="pick-small" aria-label="Small pig stamp">
-          <span class="pig-slot pig-slot--small"><img id="img-small" alt=""></span>
+        <button class="pick" id="pick-small" aria-label="Small pig stamp">
+          <span class="slot slot--small">
+            <img class="stamp" src="assets/small-pig.png" width="44" height="44" alt="Small pig">
+          </span>
+        </button>
+        <button class="pick" id="pick-gym" aria-label="Workout stamp">
+          <span class="slot slot--gym">
+            <svg class="stamp stamp--gym" width="40" height="40" role="img" aria-label="Workout"><use href="#dumbbell"/></svg>
+          </span>
         </button>
       </div>
     </section>
@@ -84,17 +103,21 @@
           <div class="stat__value" id="stat-change">—<small> kg</small></div>
         </div>
         <div class="card stat stat--row">
-          <img class="stat__pig" id="img-big-2" alt="">
+          <img class="stamp stat__icon" src="assets/big-pig.png" alt="Big pig">
           <div><div class="stat__count" id="stat-big">0</div><div class="stat__sub">big pigs</div></div>
         </div>
         <div class="card stat stat--row">
-          <img class="stat__pig stat__pig--sm" id="img-small-2" alt="">
+          <img class="stamp stat__icon stat__icon--sm" src="assets/small-pig.png" alt="Small pig">
           <div><div class="stat__count" id="stat-small">0</div><div class="stat__sub">small pigs</div></div>
+        </div>
+        <div class="card stat stat--row stat--wide">
+          <svg class="stamp stamp--gym stat__icon stat__icon--sm" role="img" aria-label="Workout"><use href="#dumbbell"/></svg>
+          <div><div class="stat__count" id="stat-gym">0</div><div class="stat__sub">workouts</div></div>
         </div>
       </div>
 
       <div class="card chart-card">
-        <div class="chart-card__title">Weight &amp; last pigs</div>
+        <div class="chart-card__title">Weight &amp; stamps</div>
         <div class="chart">
           <div class="chart__axis" id="y-axis"></div>
           <div class="chart__scroll">
