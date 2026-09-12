@@ -24,13 +24,27 @@
   var COL_W = 32, PLOT_TOP = 16, PLOT_H = 140, PLOT_BOTTOM = PLOT_TOP + PLOT_H;
 
   var $ = function (id) { return document.getElementById(id); };
-  var now = new Date();
+
+  /* Demo mode (?demo=1): a made-up month from demo/fixture.json, a frozen "today",
+     and no reads or writes of the visitor's own log. Sticky for the tab; ?demo=0 exits. */
+  var DEMO = (function () {
+    try {
+      var flag = new URLSearchParams(location.search).get('demo');
+      if (flag === '1') sessionStorage.setItem('demo', '1');
+      if (flag === '0') sessionStorage.removeItem('demo');
+      return sessionStorage.getItem('demo') === '1';
+    } catch (e) { return false; }
+  })();
+  var demoNow = null;
+  function today() { return demoNow ? new Date(demoNow) : new Date(); }
+
+  var now = today();
 
   var state = {
     view: 'cal',
     year: now.getFullYear(),
     month: now.getMonth(),
-    data: load(),
+    data: DEMO ? {} : load(),
     armed: null,
     modalKey: null,
     justStamped: null
@@ -50,6 +64,7 @@
   }
 
   function persist() {
+    if (DEMO) return; // demo stamps and weights live in memory only
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify(state.data));
     } catch (e) { /* private mode / quota — keep working in memory */ }
@@ -100,7 +115,7 @@
   function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
 
   function todayKey() {
-    var t = new Date();
+    var t = today();
     return fmt(t.getFullYear(), t.getMonth(), t.getDate());
   }
 
@@ -464,8 +479,35 @@
   /* ---------- wiring ---------- */
 
   function tickClock() {
-    $('clock').textContent = new Date()
+    $('clock').textContent = today()
       .toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+
+  function startDemo() {
+    document.documentElement.classList.add('demo');
+    var banner = document.createElement('div');
+    banner.className = 'demo-banner';
+    banner.setAttribute('data-demo-banner', '');
+    banner.textContent = 'Demo mode — sample data';
+    document.body.prepend(banner);
+
+    fetch('demo/fixture.json', { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (fixture) {
+        demoNow = fixture.demoNow;
+        var t = today();
+        state.year = t.getFullYear();
+        state.month = t.getMonth();
+        state.data = fixture.days || {};
+      })
+      .catch(function () { /* show an empty demo month rather than real data */ })
+      .then(function () {
+        tickClock();
+        renderPicker();
+        renderCalendar();
+        if (new URLSearchParams(location.search).get('view') === 'trends') setView('analytics');
+        document.documentElement.setAttribute('data-exhibit-ready', '');
+      });
   }
 
   function init() {
@@ -501,6 +543,10 @@
     tickClock();
     setInterval(tickClock, 30000);
 
+    if (DEMO) {
+      startDemo();
+      return;
+    }
     renderPicker();
     renderCalendar();
   }

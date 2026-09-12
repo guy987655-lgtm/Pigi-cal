@@ -1,0 +1,16 @@
+{
+  "rewrites": [{ "source": "/api/exhibit", "destination": "/exhibit.json" }],
+  "headers": [
+    {
+      "source": "/(api/exhibit|exhibit.json)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=300" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    },
+    {
+      "source": "/demo/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }]
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "_comment": "Demo-mode month for PiggyBank (?demo=1). Invented for the portfolio persona 'Dana Cohen'. Regenerate with node demo/make-fixture.mjs.",
+  "demoNow": "2026-06-27T19:30:00+03:00",
+  "days": {
+    "2026-06-01": {
+      "weight": 68.2,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": 5
+    },
+    "2026-06-02": {
+      "weight": 68.2,
+      "stamp": "small",
+      "rot": 13,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-03": {
+      "weight": 68.3,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": -7
+    },
+    "2026-06-04": {
+      "weight": 68.4,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-05": {
+      "weight": 68.1,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": 1
+    },
+    "2026-06-06": {
+      "weight": null,
+      "stamp": "big",
+      "rot": -9,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-07": {
+      "weight": 68.3,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-08": {
+      "weight": 67.9,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": 4
+    },
+    "2026-06-09": {
+      "weight": 67.8,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-10": {
+      "weight": 68.1,
+      "stamp": "small",
+      "rot": 7,
+      "gym": true,
+      "gymRot": 7
+    },
+    "2026-06-11": {
+      "weight": 67.9,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-12": {
+      "weight": 67.5,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": 6
+    },
+    "2026-06-13": {
+      "weight": null,
+      "stamp": "big",
+      "rot": -11,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-15": {
+      "weight": 67.4,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": -7
+    },
+    "2026-06-16": {
+      "weight": 67.6,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-17": {
+      "weight": 67.3,
+      "stamp": "small",
+      "rot": 9,
+      "gym": true,
+      "gymRot": -9
+    },
+    "2026-06-18": {
+      "weight": 67.4,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-19": {
+      "weight": 67.2,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": 9
+    },
+    "2026-06-20": {
+      "weight": null,
+      "stamp": "big",
+      "rot": -12,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-21": {
+      "weight": 67.7,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-22": {
+      "weight": 67.2,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": 7
+    },
+    "2026-06-23": {
+      "weight": 66.9,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-24": {
+      "weight": null,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": 10
+    },
+    "2026-06-25": {
+      "weight": 67,
+      "stamp": "small",
+      "rot": 8,
+      "gym": false,
+      "gymRot": 0
+    },
+    "2026-06-26": {
+      "weight": 67.1,
+      "stamp": null,
+      "rot": 0,
+      "gym": true,
+      "gymRot": 7
+    },
+    "2026-06-27": {
+      "weight": 67.1,
+      "stamp": null,
+      "rot": 0,
+      "gym": false,
+      "gymRot": 0
+    }
+  }
+}

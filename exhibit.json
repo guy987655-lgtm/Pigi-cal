@@ -1,0 +1,61 @@
+{
+  "slug": "piggybank",
+  "title": { "he": "PiggyBank", "en": "PiggyBank" },
+  "headline": {
+    "he": "לוח שנה למשקל ולהרגלי אכילה: שוקלים, מטביעים חזרזיר על ימים של הגזמה, ורואים את החודש כולו",
+    "en": "A calendar for weight and eating habits: log a weigh-in, stamp a pig on the days you overdid it, see the whole month"
+  },
+  "status": "live",
+  "depth": "compact",
+  "version": "1.1.0",
+  "updatedAt": "2026-09-12T00:00:00+03:00",
+  "stack": ["HTML", "CSS", "JavaScript", "SVG", "localStorage", "PWA manifest"],
+  "facts": [
+    { "label": { "he": "נבנה", "en": "Built" }, "value": { "he": "יולי 2026", "en": "July 2026" } },
+    { "label": { "he": "מסכים", "en": "Screens" }, "value": { "he": "2 — לוח שנה ומגמות", "en": "2 — calendar and trends" } },
+    { "label": { "he": "תלויות", "en": "Dependencies" }, "value": { "he": "אין", "en": "None" } }
+  ],
+  "highlights": [
+    {
+      "title": { "he": "קלט של הקשה אחת", "en": "One-tap input" },
+      "body": {
+        "he": "בוחרים חותמת פעם אחת, ואז כל הקשה על יום מטביעה אותה. מספיק שנייה ביום כדי שהמעקב לא יינטש.",
+        "en": "Pick a stamp once, then every tap on a day stamps it. A second a day is what keeps a tracker from being abandoned."
+      }
+    },
+    {
+      "title": { "he": "גרף מגמה בלי חורים", "en": "A trend line without gaps" },
+      "body": {
+        "he": "ימים בלי שקילה מקבלים אינטרפולציה ליניארית, כך שהקו מראה את הכיוון ולא את הימים שנשכחו.",
+        "en": "Days without a weigh-in are linearly interpolated, so the line shows direction rather than the days you forgot."
+      }
+    },
+    {
+      "title": { "he": "בלי חשבון ובלי שרת", "en": "No account, no server" },
+      "body": {
+        "he": "הכול נשמר ב-localStorage במכשיר. נתונים אישיים לא עוזבים את הטלפון.",
+        "en": "Everything stays in the device's localStorage. Personal data never leaves the phone."
+      }
+    }
+  ],
+  "demoMode": {
+    "supported": true,
+    "entryUrl": "/?demo=1",
+    "note": { "he": "חודש מומצא של פרסונת הדגמה", "en": "An invented month for a demo persona" }
+  },
+  "locales": ["en"],
+  "tourRoutes": [
+    {
+      "id": "calendar",
+      "path": "/?demo=1",
+      "caption": { "he": "לוח החודש: שקילות, חזרזירים ואימונים", "en": "The month: weigh-ins, pigs and workouts" },
+      "locale": "en"
+    },
+    {
+      "id": "trends",
+      "path": "/?demo=1&view=trends",
+      "caption": { "he": "מגמת המשקל לאורך החודש, עם ספירת החותמות", "en": "Weight across the month, with the stamp counts" },
+      "locale": "en"
+    }
+  ]
+}
